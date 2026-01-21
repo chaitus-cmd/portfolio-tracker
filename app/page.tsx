@@ -3,8 +3,8 @@
 import { useState, useEffect } from 'react'
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
 
-// Demo portfolio holdings (fake data for showcase)
-const holdings = [
+// Default demo holdings
+const defaultHoldings = [
   { symbol: 'AAPL', name: 'Apple Inc', shares: 150, account: 'Brokerage' },
   { symbol: 'GOOGL', name: 'Alphabet Inc', shares: 75, account: 'Brokerage' },
   { symbol: 'MSFT', name: 'Microsoft Corp', shares: 100, account: 'Brokerage' },
@@ -15,14 +15,13 @@ const holdings = [
   { symbol: 'NFLX', name: 'Netflix Inc', shares: 30, account: 'IRA' },
   { symbol: 'AMD', name: 'Advanced Micro Devices', shares: 120, account: 'Brokerage' },
   { symbol: 'CRM', name: 'Salesforce Inc', shares: 40, account: 'Brokerage' },
-  { symbol: 'DIS', name: 'Walt Disney Co', shares: 85, account: 'Brokerage' },
-  { symbol: 'SHOP', name: 'Shopify Inc', shares: 55, account: 'Brokerage' },
   { symbol: 'VOO', name: 'Vanguard S&P 500 ETF', shares: 200, account: 'Roth IRA' },
   { symbol: 'QQQ', name: 'Invesco QQQ Trust', shares: 100, account: 'IRA' },
   { symbol: 'BTC-USD', name: 'Bitcoin', shares: 0.5, account: 'Coinbase' },
 ]
 
 export default function Dashboard() {
+  const [holdings, setHoldings] = useState<any[]>([])
   const [activeTab, setActiveTab] = useState('losers')
   const [prices, setPrices] = useState<any>({})
   const [loading, setLoading] = useState(true)
@@ -35,9 +34,30 @@ export default function Dashboard() {
   const [news, setNews] = useState<any[]>([])
   const [newsLoading, setNewsLoading] = useState(true)
   const [rightPanelTab, setRightPanelTab] = useState('chat')
+  const [showAddModal, setShowAddModal] = useState(false)
+  const [newStock, setNewStock] = useState({ symbol: '', name: '', shares: '', account: 'Brokerage' })
+
+  // Load holdings from localStorage on mount
+  useEffect(() => {
+    const saved = localStorage.getItem('portfolio-holdings')
+    if (saved) {
+      setHoldings(JSON.parse(saved))
+    } else {
+      setHoldings(defaultHoldings)
+    }
+  }, [])
+
+  // Save holdings to localStorage whenever they change
+  useEffect(() => {
+    if (holdings.length > 0) {
+      localStorage.setItem('portfolio-holdings', JSON.stringify(holdings))
+    }
+  }, [holdings])
 
   // Fetch live prices
   useEffect(() => {
+    if (holdings.length === 0) return
+    
     async function fetchPrices() {
       setLoading(true)
       try {
@@ -55,10 +75,12 @@ export default function Dashboard() {
     fetchPrices()
     const interval = setInterval(fetchPrices, 60000)
     return () => clearInterval(interval)
-  }, [])
+  }, [holdings])
 
   // Fetch historical data
   useEffect(() => {
+    if (holdings.length === 0) return
+    
     async function fetchHistory() {
       setHistoryLoading(true)
       try {
@@ -75,14 +97,14 @@ export default function Dashboard() {
       setHistoryLoading(false)
     }
     fetchHistory()
-  }, [])
+  }, [holdings])
 
   // Fetch news
   useEffect(() => {
     async function fetchNews() {
       setNewsLoading(true)
       try {
-        const topSymbols = ['NVDA', 'AAPL', 'AMZN', 'GOOGL', 'META', 'TSLA', 'NFLX', 'AMD', 'CRM', 'SHOP']
+        const topSymbols = ['NVDA', 'AAPL', 'AMZN', 'GOOGL', 'META', 'TSLA', 'NFLX', 'AMD', 'CRM', 'MSFT']
         const response = await fetch(`/api/news?symbols=${topSymbols.join(',')}`)
         const data = await response.json()
         if (Array.isArray(data)) {
@@ -95,6 +117,33 @@ export default function Dashboard() {
     }
     fetchNews()
   }, [])
+
+  // Add a new stock
+  const addStock = () => {
+    if (!newStock.symbol || !newStock.shares) return
+    
+    const stock = {
+      symbol: newStock.symbol.toUpperCase(),
+      name: newStock.name || newStock.symbol.toUpperCase(),
+      shares: parseFloat(newStock.shares),
+      account: newStock.account
+    }
+    
+    setHoldings(prev => [...prev, stock])
+    setNewStock({ symbol: '', name: '', shares: '', account: 'Brokerage' })
+    setShowAddModal(false)
+  }
+
+  // Remove a stock
+  const removeStock = (symbol: string) => {
+    setHoldings(prev => prev.filter(h => h.symbol !== symbol))
+  }
+
+  // Reset to default holdings
+  const resetHoldings = () => {
+    setHoldings(defaultHoldings)
+    localStorage.removeItem('portfolio-holdings')
+  }
 
   // Calculate portfolio values with live prices
   const holdingsWithPrices = holdings.map(holding => {
@@ -177,6 +226,152 @@ export default function Dashboard() {
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh' }}>
+      {/* Add Stock Modal */}
+      {showAddModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0,0,0,0.7)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000
+        }}>
+          <div style={{
+            background: 'var(--bg-secondary)',
+            borderRadius: '16px',
+            padding: '24px',
+            width: '400px',
+            border: '1px solid var(--border)'
+          }}>
+            <h3 style={{ fontSize: '18px', fontWeight: 600, marginBottom: '20px' }}>Add New Stock</h3>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div>
+                <label style={{ fontSize: '12px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Symbol *</label>
+                <input
+                  type="text"
+                  placeholder="e.g. AAPL"
+                  value={newStock.symbol}
+                  onChange={(e) => setNewStock({ ...newStock, symbol: e.target.value })}
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    borderRadius: '8px',
+                    border: '1px solid var(--border)',
+                    background: 'var(--bg-tertiary)',
+                    color: 'var(--text-primary)',
+                    fontSize: '14px',
+                    marginTop: '6px'
+                  }}
+                />
+              </div>
+              
+              <div>
+                <label style={{ fontSize: '12px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Company Name</label>
+                <input
+                  type="text"
+                  placeholder="e.g. Apple Inc"
+                  value={newStock.name}
+                  onChange={(e) => setNewStock({ ...newStock, name: e.target.value })}
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    borderRadius: '8px',
+                    border: '1px solid var(--border)',
+                    background: 'var(--bg-tertiary)',
+                    color: 'var(--text-primary)',
+                    fontSize: '14px',
+                    marginTop: '6px'
+                  }}
+                />
+              </div>
+              
+              <div>
+                <label style={{ fontSize: '12px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Shares *</label>
+                <input
+                  type="number"
+                  placeholder="e.g. 100"
+                  value={newStock.shares}
+                  onChange={(e) => setNewStock({ ...newStock, shares: e.target.value })}
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    borderRadius: '8px',
+                    border: '1px solid var(--border)',
+                    background: 'var(--bg-tertiary)',
+                    color: 'var(--text-primary)',
+                    fontSize: '14px',
+                    marginTop: '6px'
+                  }}
+                />
+              </div>
+              
+              <div>
+                <label style={{ fontSize: '12px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Account</label>
+                <select
+                  value={newStock.account}
+                  onChange={(e) => setNewStock({ ...newStock, account: e.target.value })}
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    borderRadius: '8px',
+                    border: '1px solid var(--border)',
+                    background: 'var(--bg-tertiary)',
+                    color: 'var(--text-primary)',
+                    fontSize: '14px',
+                    marginTop: '6px'
+                  }}
+                >
+                  <option value="Brokerage">Brokerage</option>
+                  <option value="Roth IRA">Roth IRA</option>
+                  <option value="IRA">IRA</option>
+                  <option value="401k">401k</option>
+                  <option value="Coinbase">Coinbase</option>
+                </select>
+              </div>
+            </div>
+            
+            <div style={{ display: 'flex', gap: '12px', marginTop: '24px' }}>
+              <button
+                onClick={() => setShowAddModal(false)}
+                style={{
+                  flex: 1,
+                  padding: '12px',
+                  borderRadius: '8px',
+                  border: '1px solid var(--border)',
+                  background: 'var(--bg-tertiary)',
+                  color: 'var(--text-primary)',
+                  fontSize: '14px',
+                  cursor: 'pointer'
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={addStock}
+                style={{
+                  flex: 1,
+                  padding: '12px',
+                  borderRadius: '8px',
+                  border: 'none',
+                  background: 'var(--accent-blue)',
+                  color: 'white',
+                  fontSize: '14px',
+                  fontWeight: 600,
+                  cursor: 'pointer'
+                }}
+              >
+                Add Stock
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Sidebar */}
       <aside style={{
         width: '240px',
@@ -236,7 +431,7 @@ export default function Dashboard() {
             fontWeight: 500,
             textAlign: 'center'
           }}>
-            🎯 Demo Mode — Displaying sample portfolio data with live market prices. Built by Chaitu.
+            🎯 Demo Mode — Add your own stocks below! Data resets on browser clear. Built by Chaitu.
           </div>
           
           <div style={{
@@ -254,8 +449,42 @@ export default function Dashboard() {
               </p>
             </div>
             <div style={{ display: 'flex', gap: '12px' }}>
-              <Button variant="secondary" icon="refresh" onClick={() => window.location.reload()}>Sync</Button>
-              <Button variant="primary" icon="doc">Daily Brief</Button>
+              <button
+                onClick={resetHoldings}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  padding: '8px 16px',
+                  borderRadius: '8px',
+                  fontSize: '13px',
+                  fontWeight: 500,
+                  cursor: 'pointer',
+                  border: '1px solid var(--border)',
+                  background: 'var(--bg-tertiary)',
+                  color: 'var(--text-primary)'
+                }}
+              >
+                ↺ Reset
+              </button>
+              <button
+                onClick={() => setShowAddModal(true)}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  padding: '8px 16px',
+                  borderRadius: '8px',
+                  fontSize: '13px',
+                  fontWeight: 500,
+                  cursor: 'pointer',
+                  border: 'none',
+                  background: 'var(--accent-blue)',
+                  color: 'white'
+                }}
+              >
+                + Add Stock
+              </button>
             </div>
           </div>
         </header>
@@ -301,6 +530,7 @@ export default function Dashboard() {
                     <th style={{ textAlign: 'left', padding: '12px 20px', fontSize: '11px', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Price</th>
                     <th style={{ textAlign: 'left', padding: '12px 20px', fontSize: '11px', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Value</th>
                     <th style={{ textAlign: 'right', padding: '12px 20px', fontSize: '11px', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Change</th>
+                    <th style={{ width: '50px' }}></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -326,6 +556,26 @@ export default function Dashboard() {
                         }}>
                           {loading ? '...' : `${holding.changePercent >= 0 ? '+' : ''}${holding.changePercent.toFixed(2)}%`}
                         </span>
+                      </td>
+                      <td style={{ padding: '14px 10px' }}>
+                        <button
+                          onClick={() => removeStock(holding.symbol)}
+                          style={{
+                            width: '28px',
+                            height: '28px',
+                            borderRadius: '6px',
+                            border: 'none',
+                            background: 'var(--accent-red-dim)',
+                            color: 'var(--accent-red)',
+                            cursor: 'pointer',
+                            fontSize: '14px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center'
+                          }}
+                        >
+                          ×
+                        </button>
                       </td>
                     </tr>
                   ))}
@@ -567,19 +817,6 @@ function AccountBadge({ name, color }: { name: string; color: string }) {
       <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: color }}></span>
       {name}
     </div>
-  )
-}
-
-function Button({ children, variant, icon, onClick }: { children: React.ReactNode; variant: string; icon: string; onClick?: () => void }) {
-  return (
-    <button onClick={onClick} style={{
-      display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px', borderRadius: '8px', fontSize: '13px', fontWeight: 500, cursor: 'pointer',
-      border: variant === 'primary' ? 'none' : '1px solid var(--border)',
-      background: variant === 'primary' ? 'var(--accent-blue)' : 'var(--bg-tertiary)',
-      color: 'var(--text-primary)'
-    }}>
-      {icon === 'refresh' && '↻'}{icon === 'doc' && '📄'}{children}
-    </button>
   )
 }
 
