@@ -17,10 +17,3 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     </html>
   )
 }
-```
-
-Replace your entire `layout.tsx` with this, save it, then run:
-```
-git add .
-git commit -m "Fix TypeScript error in layout"
-git push

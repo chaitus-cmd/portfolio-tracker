@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
 
-// Your actual portfolio holdings (shares you own)
+// Demo portfolio holdings (fake data for showcase)
 const holdings = [
   { symbol: 'AAPL', name: 'Apple Inc', shares: 150, account: 'Brokerage' },
   { symbol: 'GOOGL', name: 'Alphabet Inc', shares: 75, account: 'Brokerage' },
@@ -24,15 +24,15 @@ const holdings = [
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState('losers')
-  const [prices, setPrices] = useState({})
+  const [prices, setPrices] = useState<any>({})
   const [loading, setLoading] = useState(true)
-  const [lastUpdated, setLastUpdated] = useState(null)
-  const [chatMessages, setChatMessages] = useState([])
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
+  const [chatMessages, setChatMessages] = useState<any[]>([])
   const [inputValue, setInputValue] = useState('')
   const [isAiLoading, setIsAiLoading] = useState(false)
-  const [historyData, setHistoryData] = useState([])
+  const [historyData, setHistoryData] = useState<any[]>([])
   const [historyLoading, setHistoryLoading] = useState(true)
-  const [news, setNews] = useState([])
+  const [news, setNews] = useState<any[]>([])
   const [newsLoading, setNewsLoading] = useState(true)
   const [rightPanelTab, setRightPanelTab] = useState('chat')
 
@@ -67,7 +67,7 @@ export default function Dashboard() {
         const response = await fetch(`/api/history?symbols=${symbols}&shares=${shares}`)
         const data = await response.json()
         if (Array.isArray(data)) {
-          setHistoryData(data)
+          setHistoryData(data as any[])
         }
       } catch (error) {
         console.error('Failed to fetch history:', error)
@@ -82,11 +82,11 @@ export default function Dashboard() {
     async function fetchNews() {
       setNewsLoading(true)
       try {
-        const topSymbols = ['NVDA', 'AAPL', 'AMZN', 'GOOG', 'META', 'TSLA', 'NFLX', 'AMD', 'CRM', 'SHOP']
+        const topSymbols = ['NVDA', 'AAPL', 'AMZN', 'GOOGL', 'META', 'TSLA', 'NFLX', 'AMD', 'CRM', 'SHOP']
         const response = await fetch(`/api/news?symbols=${topSymbols.join(',')}`)
         const data = await response.json()
         if (Array.isArray(data)) {
-          setNews(data)
+          setNews(data as any[])
         }
       } catch (error) {
         console.error('Failed to fetch news:', error)
@@ -127,10 +127,10 @@ export default function Dashboard() {
     ? sortedHoldings 
     : sortedHoldings.filter(h => activeTab === 'gainers' ? h.changePercent > 0 : h.changePercent < 0).slice(0, 6)
 
-  const formatCurrency = (num) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(num)
-  const formatNumber = (num) => new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num)
-  const formatTime = (date) => date ? date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }) : ''
-  const formatTimeAgo = (timestamp) => {
+  const formatCurrency = (num: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(num)
+  const formatNumber = (num: number) => new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num)
+  const formatTime = (date: Date | null) => date ? date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }) : ''
+  const formatTimeAgo = (timestamp: number) => {
     const seconds = Math.floor((Date.now() - timestamp) / 1000)
     if (seconds < 60) return 'just now'
     const minutes = Math.floor(seconds / 60)
@@ -259,35 +259,6 @@ export default function Dashboard() {
             </div>
           </div>
         </header>
-```
-
-## Step 4: Commit the demo version
-```
-git add .
-git commit -m "Demo version with fake data and disclaimer"
-```
-
-## Step 5: Push both branches to GitHub
-
-First, create your repo on GitHub (if you haven't already), then:
-```
-git remote add origin https://github.com/YOUR_USERNAME/portfolio-tracker.git
-git push -u origin main
-git push -u origin demo
-```
-
----
-
-## Switching between versions
-
-To go back to your personal version:
-```
-git checkout main
-```
-
-To go to the demo version:
-```
-git checkout demo
 
         <div style={{
           flex: 1,
@@ -312,7 +283,7 @@ git checkout demo
             <div style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', borderRadius: '12px', overflow: 'hidden' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 20px', borderBottom: '1px solid var(--border)' }}>
                 <h2 style={{ fontSize: '15px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span style={{ color: 'var(--accent-blue)' }}>📈</span> Today's Movers
+                  <span style={{ color: 'var(--accent-blue)' }}>📈</span> Today&apos;s Movers
                   {loading && <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>(loading...)</span>}
                 </h2>
                 <div style={{ display: 'flex', gap: '4px', background: 'var(--bg-tertiary)', padding: '4px', borderRadius: '8px' }}>
@@ -374,7 +345,7 @@ git checkout demo
                   display: 'flex', alignItems: 'center', justifyContent: 'center'
                 }}>
                   <div style={{ width: '80px', height: '80px', background: 'var(--bg-secondary)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
-                    <div style={{ fontSize: '16px', fontWeight: 700, fontFamily: "'JetBrains Mono', monospace" }}>{loading ? '...' : `$${(totalValue / 1000000).toFixed(2)}M`}</div>
+                    <div style={{ fontSize: '16px', fontWeight: 700, fontFamily: "'JetBrains Mono', monospace" }}>{loading ? '...' : `$${(totalValue / 1000).toFixed(0)}k`}</div>
                     <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Total</div>
                   </div>
                 </div>
@@ -455,14 +426,14 @@ git checkout demo
                     </button>
                   </div>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '12px' }}>
-                    <SuggestionChip onClick={() => setInputValue("What's my biggest position?")}>What's my biggest position?</SuggestionChip>
+                    <SuggestionChip onClick={() => setInputValue("What's my biggest position?")}>What&apos;s my biggest position?</SuggestionChip>
                     <SuggestionChip onClick={() => setInputValue("How am I doing today?")}>How am I doing today?</SuggestionChip>
                   </div>
                 </div>
               </>
             )}
 
-           {/* News Panel */}
+            {/* News Panel */}
             {rightPanelTab === 'news' && (
               <div style={{ flex: 1, overflowY: 'auto', maxHeight: '500px' }}>
                 {newsLoading ? (
@@ -551,7 +522,7 @@ git checkout demo
                         borderRadius: '8px',
                         color: 'var(--text-primary)'
                       }}
-                      formatter={(value) => [`$${value.toLocaleString()}`, 'Portfolio Value']}
+                      formatter={(value) => [`$${Number(value).toLocaleString()}`, 'Portfolio Value']}
                     />
                     <Line 
                       type="monotone" 
@@ -575,7 +546,7 @@ git checkout demo
   )
 }
 
-function NavItem({ icon, label, active }) {
+function NavItem({ icon, label, active }: { icon: string; label: string; active?: boolean }) {
   return (
     <div style={{
       display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 12px', borderRadius: '8px', cursor: 'pointer', fontSize: '14px',
@@ -590,7 +561,7 @@ function NavItem({ icon, label, active }) {
   )
 }
 
-function AccountBadge({ name, color }) {
+function AccountBadge({ name, color }: { name: string; color: string }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 12px', fontSize: '13px', color: 'var(--text-secondary)' }}>
       <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: color }}></span>
@@ -599,7 +570,7 @@ function AccountBadge({ name, color }) {
   )
 }
 
-function Button({ children, variant, icon, onClick }) {
+function Button({ children, variant, icon, onClick }: { children: React.ReactNode; variant: string; icon: string; onClick?: () => void }) {
   return (
     <button onClick={onClick} style={{
       display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px', borderRadius: '8px', fontSize: '13px', fontWeight: 500, cursor: 'pointer',
@@ -612,7 +583,7 @@ function Button({ children, variant, icon, onClick }) {
   )
 }
 
-function SummaryCard({ label, value, change, changePercent, featured, loading }) {
+function SummaryCard({ label, value, change, changePercent, featured, loading }: { label: string; value: string; change?: number; changePercent: number; featured?: boolean; loading: boolean }) {
   const isPositive = (changePercent || 0) >= 0
   return (
     <div style={{
@@ -633,7 +604,7 @@ function SummaryCard({ label, value, change, changePercent, featured, loading })
   )
 }
 
-function TabButton({ children, active, onClick }) {
+function TabButton({ children, active, onClick }: { children: React.ReactNode; active: boolean; onClick: () => void }) {
   return (
     <button onClick={onClick} style={{
       padding: '6px 12px', borderRadius: '6px', fontSize: '13px', border: 'none', cursor: 'pointer',
@@ -643,7 +614,7 @@ function TabButton({ children, active, onClick }) {
   )
 }
 
-function LegendItem({ color, label, value }) {
+function LegendItem({ color, label, value }: { color: string; label: string; value: string }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px' }}>
       <span style={{ width: '10px', height: '10px', borderRadius: '3px', background: color }}></span>
@@ -653,7 +624,7 @@ function LegendItem({ color, label, value }) {
   )
 }
 
-function SuggestionChip({ children, onClick }) {
+function SuggestionChip({ children, onClick }: { children: React.ReactNode; onClick: () => void }) {
   return (
     <span onClick={onClick} style={{
       padding: '6px 12px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '20px',
