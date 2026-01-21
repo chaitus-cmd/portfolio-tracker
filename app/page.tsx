@@ -555,7 +555,7 @@ export default function Dashboard() {
   }, {} as { [key: string]: { value: number; subsectors: { [key: string]: { value: number; holdings: any[] } }; holdings: any[] } })
 
   // Sort sectors by value
-  const sortedSectors = Object.entries(sectorExposure)
+  const sortedSectors = (Object.entries(sectorExposure) as [string, { value: number; subsectors: any; holdings: any[] }][])
   .sort((a, b) => b[1].value - a[1].value)
 
   const formatCurrency = (num: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(num)
