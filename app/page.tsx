@@ -926,7 +926,7 @@ export default function Dashboard() {
                   {sortedSectors.map(([sector, data]) => {
                     const percentage = totalValue > 0 ? (data.value / totalValue) * 100 : 0
                     const isExpanded = expandedSectors.has(sector)
-                    const sortedSubsectors = Object.entries(data.subsectors).sort(([, a], [, b]) => b.value - a.value)
+                   const sortedSubsectors = (Object.entries(data.subsectors) as [string, { value: number; holdings: any[] }][]).sort((a, b) => b[1].value - a[1].value)
                     
                     return (
                       <div key={sector}>
