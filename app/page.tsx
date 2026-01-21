@@ -5,55 +5,21 @@ import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'rec
 
 // Your actual portfolio holdings (shares you own)
 const holdings = [
-  // Brokerage
-  { symbol: 'PANW', name: 'Palo Alto Networks', shares: 52, account: 'Brokerage' },
-  { symbol: 'ADBE', name: 'Adobe Inc', shares: 22, account: 'Brokerage' },
-  { symbol: 'META', name: 'Meta Platforms Inc', shares: 5.004, account: 'Brokerage' },
-  { symbol: 'TSLA', name: 'Tesla Inc', shares: 29, account: 'Brokerage' },
-  { symbol: 'AMZN', name: 'Amazon.com Inc', shares: 200, account: 'Brokerage' },
-  { symbol: 'DASH', name: 'DoorDash Inc', shares: 47, account: 'Brokerage' },
-  { symbol: 'HOOD', name: 'Robinhood Markets', shares: 247, account: 'Brokerage' },
-  { symbol: 'BRK-B', name: 'Berkshire Hathaway', shares: 20, account: 'Brokerage' },
-  { symbol: 'NFLX', name: 'Netflix Inc', shares: 250, account: 'Brokerage' },
-  { symbol: 'SPOT', name: 'Spotify Technology', shares: 8, account: 'Brokerage' },
-  { symbol: 'APO', name: 'Apollo Global Management', shares: 36.139, account: 'Brokerage' },
-  { symbol: 'UNH', name: 'UnitedHealth Group', shares: 14.091, account: 'Brokerage' },
-  { symbol: 'NKE', name: 'Nike Inc', shares: 129.676, account: 'Brokerage' },
-  { symbol: 'AMD', name: 'Advanced Micro Devices', shares: 67, account: 'Brokerage' },
-  { symbol: 'AGNG', name: 'Global X Aging Population ETF', shares: 329, account: 'Brokerage' },
-  { symbol: 'VDC', name: 'Vanguard Consumer Staples ETF', shares: 37.411, account: 'Brokerage' },
-  { symbol: 'SHOP', name: 'Shopify Inc', shares: 43, account: 'Brokerage' },
-  { symbol: 'RIVN', name: 'Rivian Automotive', shares: 409, account: 'Brokerage' },
-  { symbol: 'ABNB', name: 'Airbnb Inc', shares: 39, account: 'Brokerage' },
-  { symbol: 'PTON', name: 'Peloton Interactive', shares: 666, account: 'Brokerage' },
-  { symbol: 'RDDT', name: 'Reddit Inc', shares: 15, account: 'Brokerage' },
-  { symbol: 'SHLD', name: 'Global X Defense Tech ETF', shares: 519, account: 'Brokerage' },
-  { symbol: 'CHPX', name: 'Global X AI Semiconductor ETF', shares: 132, account: 'Brokerage' },
-  { symbol: 'COST', name: 'Costco Wholesale', shares: 6, account: 'Brokerage' },
-  { symbol: 'QQQM', name: 'Invesco Nasdaq 100 ETF', shares: 8.02, account: 'Brokerage' },
-  { symbol: 'BA', name: 'Boeing Company', shares: 29, account: 'Brokerage' },
-  { symbol: 'CRWV', name: 'CoreWeave Inc', shares: 50, account: 'Brokerage' },
-  { symbol: 'VHT', name: 'Vanguard Health Care ETF', shares: 34, account: 'Brokerage' },
-  { symbol: 'AAPL', name: 'Apple Inc', shares: 54.64, account: 'Brokerage' },
-  { symbol: 'SBUX', name: 'Starbucks Corp', shares: 47.238, account: 'Brokerage' },
-  { symbol: 'VUG', name: 'Vanguard Growth ETF', shares: 88.5836, account: 'Brokerage' },
-  { symbol: 'SCHD', name: 'Schwab US Dividend Equity ETF', shares: 189.885, account: 'Brokerage' },
-  { symbol: 'CRM', name: 'Salesforce Inc', shares: 27.222, account: 'Brokerage' },
-  { symbol: 'DIS', name: 'Walt Disney Co', shares: 57.338, account: 'Brokerage' },
-  { symbol: 'DRIV', name: 'Global X Autonomous Vehicles ETF', shares: 613.483, account: 'Brokerage' },
-  // Mixed (multiple accounts)
-  { symbol: 'SPMO', name: 'Invesco S&P 500 Momentum ETF', shares: 577.38, account: 'Mixed' },
-  { symbol: 'VOO', name: 'Vanguard S&P 500 ETF', shares: 65.738, account: 'Mixed' },
-  { symbol: 'PAVE', name: 'Global X US Infrastructure ETF', shares: 397.019, account: 'Mixed' },
-  { symbol: 'GOOG', name: 'Alphabet Inc', shares: 171.971, account: 'Mixed' },
-  { symbol: 'RSP', name: 'Invesco S&P 500 Equal Weight ETF', shares: 93.561, account: 'Mixed' },
-  // IRA
-  { symbol: 'QQQ', name: 'Invesco QQQ Trust', shares: 28.067, account: 'IRA' },
-  // Roth IRA
-  { symbol: 'MCD', name: "McDonald's Corp", shares: 31.364, account: 'Roth IRA' },
-  { symbol: 'NVDA', name: 'NVIDIA Corporation', shares: 56.006, account: 'Roth IRA' },
-  // External
-  { symbol: 'BTC-USD', name: 'Bitcoin', shares: 0.08660678, account: 'Robinhood' },
+  { symbol: 'AAPL', name: 'Apple Inc', shares: 150, account: 'Brokerage' },
+  { symbol: 'GOOGL', name: 'Alphabet Inc', shares: 75, account: 'Brokerage' },
+  { symbol: 'MSFT', name: 'Microsoft Corp', shares: 100, account: 'Brokerage' },
+  { symbol: 'AMZN', name: 'Amazon.com Inc', shares: 50, account: 'Brokerage' },
+  { symbol: 'NVDA', name: 'NVIDIA Corporation', shares: 80, account: 'Roth IRA' },
+  { symbol: 'TSLA', name: 'Tesla Inc', shares: 60, account: 'Brokerage' },
+  { symbol: 'META', name: 'Meta Platforms Inc', shares: 45, account: 'Brokerage' },
+  { symbol: 'NFLX', name: 'Netflix Inc', shares: 30, account: 'IRA' },
+  { symbol: 'AMD', name: 'Advanced Micro Devices', shares: 120, account: 'Brokerage' },
+  { symbol: 'CRM', name: 'Salesforce Inc', shares: 40, account: 'Brokerage' },
+  { symbol: 'DIS', name: 'Walt Disney Co', shares: 85, account: 'Brokerage' },
+  { symbol: 'SHOP', name: 'Shopify Inc', shares: 55, account: 'Brokerage' },
+  { symbol: 'VOO', name: 'Vanguard S&P 500 ETF', shares: 200, account: 'Roth IRA' },
+  { symbol: 'QQQ', name: 'Invesco QQQ Trust', shares: 100, account: 'IRA' },
+  { symbol: 'BTC-USD', name: 'Bitcoin', shares: 0.5, account: 'Coinbase' },
 ]
 
 export default function Dashboard() {
@@ -258,25 +224,70 @@ export default function Dashboard() {
       <main style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         <header style={{
           display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          padding: '16px 24px',
+          flexDirection: 'column',
           borderBottom: '1px solid var(--border)',
           background: 'var(--bg-secondary)'
         }}>
-          <div>
-            <h1 style={{ fontSize: '20px', fontWeight: 600 }}>Good morning, Chaitu 👋</h1>
-            <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
-              {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
-              {lastUpdated && ` • Updated ${formatTime(lastUpdated)}`}
-              {loading && ' • Refreshing...'}
-            </p>
+          {/* Demo Disclaimer Banner */}
+          <div style={{
+            background: 'linear-gradient(135deg, var(--accent-blue), var(--accent-purple))',
+            padding: '10px 24px',
+            fontSize: '13px',
+            fontWeight: 500,
+            textAlign: 'center'
+          }}>
+            🎯 Demo Mode — Displaying sample portfolio data with live market prices. Built by Chaitu.
           </div>
-          <div style={{ display: 'flex', gap: '12px' }}>
-            <Button variant="secondary" icon="refresh" onClick={() => window.location.reload()}>Sync</Button>
-            <Button variant="primary" icon="doc">Daily Brief</Button>
+          
+          <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            padding: '16px 24px'
+          }}>
+            <div>
+              <h1 style={{ fontSize: '20px', fontWeight: 600 }}>Welcome to Portfolio AI 👋</h1>
+              <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
+                {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
+                {lastUpdated && ` • Updated ${formatTime(lastUpdated)}`}
+                {loading && ' • Refreshing...'}
+              </p>
+            </div>
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <Button variant="secondary" icon="refresh" onClick={() => window.location.reload()}>Sync</Button>
+              <Button variant="primary" icon="doc">Daily Brief</Button>
+            </div>
           </div>
         </header>
+```
+
+## Step 4: Commit the demo version
+```
+git add .
+git commit -m "Demo version with fake data and disclaimer"
+```
+
+## Step 5: Push both branches to GitHub
+
+First, create your repo on GitHub (if you haven't already), then:
+```
+git remote add origin https://github.com/YOUR_USERNAME/portfolio-tracker.git
+git push -u origin main
+git push -u origin demo
+```
+
+---
+
+## Switching between versions
+
+To go back to your personal version:
+```
+git checkout main
+```
+
+To go to the demo version:
+```
+git checkout demo
 
         <div style={{
           flex: 1,
