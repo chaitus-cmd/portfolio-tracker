@@ -5,7 +5,7 @@ export const metadata = {
   description: 'Your Personal Investment Intelligence Platform',
 }
 
-export default function RootLayout({ children }) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <head>
@@ -17,3 +17,10 @@ export default function RootLayout({ children }) {
     </html>
   )
 }
+```
+
+Replace your entire `layout.tsx` with this, save it, then run:
+```
+git add .
+git commit -m "Fix TypeScript error in layout"
+git push
