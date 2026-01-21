@@ -556,7 +556,7 @@ export default function Dashboard() {
 
   // Sort sectors by value
   const sortedSectors = Object.entries(sectorExposure)
-    .sort(([, a], [, b]) => b.value - a.value)
+  .sort(([, a], [, b]: [string, { value: number; subsectors: any; holdings: any[] }]) => b.value - a.value)
 
   const formatCurrency = (num: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(num)
   const formatNumber = (num: number) => new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num)
